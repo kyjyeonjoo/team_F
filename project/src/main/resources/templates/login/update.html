@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+ <html xmlns:th="http://www.thymeleaf.org">
+ <head>
+ <meta charset="UTF-8">
+ <title>사용자 정보 변경</title>
+ </head>
+ 
+ <body>
+ <h3>사용자 정보 변경</h3>
+ <p th:text="${session.email}"/>
+ <p th:text="${session.password}"/>
+ <p th:text="${session.address}"/>
+ <p th:text="${session.phone}"/>
+ <p th:text="${session.name}"/>
+ </body>
+ </html> 

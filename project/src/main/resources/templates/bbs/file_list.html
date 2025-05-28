@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>전체 파일 리스트</title>
+</head>
+
+<body>
+<h3>전체 파일 리스트</h3>
+<table border="1">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>이름</th>
+			<th>다운로드</th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		<tr th:each="file : ${files}">
+ 			<td th:text="${file.num}"></td>
+ 			<td th:text="${file.name}"></td>
+ 		</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

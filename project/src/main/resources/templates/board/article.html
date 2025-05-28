@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>게시글 내용</title>
+</head>
+
+<body>
+<h3> 게시글 내용 </h3>
+<p><a th:href="@{/siteuser/board(pno=${pno})}">글목록</a></p>
+
+<table style="width:100%" border="1">
+<tr><td>제목</td><td>[[${article.title}]]</td>
+<tr><td>작성자</td><td>[[${article.author}]]</td>
+<tr><td>내용</td><td>[[${article.contents}]]</td>
+<tr><td>날짜</td><td>[[${article.day}]]</td>
+</table>
+
+</body>
+</html>

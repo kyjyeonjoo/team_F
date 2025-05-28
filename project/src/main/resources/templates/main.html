@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>첫페이지</title>
+</head>
+<body>
+<h3>첫 페이지</h3>
+
+<th:block th:if="${session.email} != null">
+<p><a href="/siteuser/login/logout">로그아웃</a></p>
+</th:block>
+ 
+ 
+<th:block th:if="${session.name} != null">
+<p th:text="${session.name}"/>
+</th:block>
+
+
+<p><a th:href="@{/siteuser/login/signup}">사용자 등록</a></p>
+<p><a th:href="@{/siteuser/login/login}">사용자 로그인</a></p>
+<p><a th:href="@{/siteuser/board}">게시글</a></p>
+<p><a th:href="@{/siteuser/bbs/upload}">파일 업로드</a></p>
+<p><a th:href="@{/siteuser/bbs/filelist}">파일 전체 리스트</a></p>
+</body>
+</html>
