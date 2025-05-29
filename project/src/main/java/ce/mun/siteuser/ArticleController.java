@@ -29,9 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ce.mun.siteuser.domain.ArticleDTO;
+import ce.mun.siteuser.domain.Article_reviewDTO;
 import ce.mun.siteuser.domain.FileDTO;
 import ce.mun.siteuser.repository.Article;
 import ce.mun.siteuser.repository.ArticleHeader;
+import ce.mun.siteuser.repository.Article_review;
+import ce.mun.siteuser.repository.Article_reviewHeader;
 import ce.mun.siteuser.repository.FileRepository;
 import ce.mun.siteuser.repository.SiteFile;
 import ce.mun.siteuser.repository.SiteUser;
@@ -95,29 +98,24 @@ public class ArticleController {
 		return new ResponseEntity<>(res, headers, HttpStatus.OK);
 		
 	}
-	
+//////////////////////////////////////////////////////////////////////////////////////////////
 	@GetMapping("board/write")
 	public String bbsForm() {
-		return "/board/new_article";
+		return "/board/restaurant_new_article";
 	}
 	@PostMapping("board/write")
 	public String addArticle(ArticleDTO dto) {
 		userService.save(dto);
-		return "/board/saved";
+		return "/board/restaurant_saved";
 	}
 	@GetMapping("board/read")
 	public String readArticle(@RequestParam(name="num")Long num, @RequestParam( defaultValue="0",  name="pno") int pno, Model model, HttpSession session) {
 		Article article = userService.getArticle(num);
 		model.addAttribute("article", article);
 		model.addAttribute("pno", pno);
-		return "/board/article";
+		return "/board/restaurant_article";
 	}
 	
-	@GetMapping("board")
-	public String subjectArticle() {
-		return "/board/subject";
-	}
-
 	
 	@GetMapping("board/allarticles")
 	public String getAllArticles(@RequestParam( defaultValue="0",  name="pno") int pno, Model model, HttpSession session, RedirectAttributes rd){
@@ -131,7 +129,54 @@ public class ArticleController {
 		Pageable paging = PageRequest.of(pno, pageSize, Sort.Direction.DESC, "num"); 
 		Page <ArticleHeader> list = userService.getArticleHeaders(paging);
 		model.addAttribute("articles", list);
-		return "/board/articles";
+		return "/board/restaurant_articles";
 	}
+	
+
+	@GetMapping("board")
+	public String subjectArticle() {
+		return "/board/subject";
+	}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+	@GetMapping("board/review_write")
+	public String Form() {
+		return "/board/review_new_article";
+	}
+	@PostMapping("board/review_write")
+	public String addArticle_review(Article_reviewDTO dto) {
+		userService.review_save(dto);
+		return "/board/review_saved";
+	}
+	
+	@GetMapping("board/review_read")
+	public String readArticle_review(@RequestParam(name="num")Long num, @RequestParam( defaultValue="0",  name="pno") int pno, Model model, HttpSession session) {
+		Article_review article_review= userService.getArticle_review(num);
+		model.addAttribute("article_review", article_review);
+		model.addAttribute("pno", pno);
+		return "/board/review_article";
+	}
+	
+
+	
+	@GetMapping("board/review_allarticles")
+	public String getAllArticles_review(@RequestParam(defaultValue="0",  name="pno") int pno, Model model, HttpSession session, RedirectAttributes rd){
+		String email = (String)session.getAttribute("email");
+		if(email != null) {
+			rd.addFlashAttribute("reason", "login required");
+			return "redirect:/error";
+		}
+		
+		
+		int pageSize = 2;
+		Pageable paging = PageRequest.of(pno, pageSize, Sort.Direction.DESC, "num"); 
+		Page <Article_reviewHeader> list = userService.getArticle_reviewHeaders(paging);
+		System.out.println("리뷰 게시글 개수: " + list.getTotalElements()); // 로그 확인
+		
+		model.addAttribute("review_articles", list);
+		return "/board/review_articles";
+	}
+	
 	
 }

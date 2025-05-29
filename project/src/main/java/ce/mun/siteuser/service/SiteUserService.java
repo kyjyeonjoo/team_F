@@ -9,10 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ce.mun.siteuser.domain.ArticleDTO;
+import ce.mun.siteuser.domain.Article_reviewDTO;
 import ce.mun.siteuser.domain.SiteUserDTO;
 import ce.mun.siteuser.repository.Article;
 import ce.mun.siteuser.repository.ArticleHeader;
 import ce.mun.siteuser.repository.ArticleRepository;
+import ce.mun.siteuser.repository.Article_review;
+import ce.mun.siteuser.repository.Article_reviewHeader;
+import ce.mun.siteuser.repository.Article_reviewRepository;
 import ce.mun.siteuser.repository.SiteUser;
 import ce.mun.siteuser.repository.SiteUserRepository;
 
@@ -47,6 +51,35 @@ public class SiteUserService {
 	
 	
 	
+	@Autowired
+	private Article_reviewRepository article_reviewRepository;
+	public Page<Article_reviewHeader> getArticle_reviewHeaders(Pageable pageable){
+		return article_reviewRepository.findArticle_reviewHeaders(pageable);
+	}
+	
+	public Article_review getArticle_review(Long num) {
+		return article_reviewRepository.getReferenceById(num);
+	}
+	
+	public void review_save(Article_reviewDTO dto) {
+		Article_review article_review = new Article_review();
+		article_review.setAuthor(dto.getAuthor());
+		article_review.setTitle(dto.getTitle());
+		article_review.setContents(dto.getContents());
+		//article.setDay(dto.getDay());
+		article_reviewRepository.save(article_review);
+	}
+	
+	public Iterable<Article_review> getArticle_reviewAll(){
+		return article_reviewRepository.findAll();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	public void save(SiteUserDTO dto) {
@@ -63,11 +96,7 @@ public class SiteUserService {
 	public SiteUser getName(String name) {
 		return userRepository.findByName(name);
 	}
-	/*
-	public SiteUser getday(Date day) {
-		return userRepository.findByDay(day);
-	}
-	*/
+
 	
 	@Transactional
 	public void updateName(String email, String name, String password, String phone, String address) {

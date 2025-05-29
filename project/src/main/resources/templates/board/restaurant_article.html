@@ -6,8 +6,8 @@
 </head>
 
 <body>
-<h3> 게시글 내용 </h3>
-<p><a th:href="@{/siteuser/board(pno=${pno})}">글목록</a></p>
+<h3> 게시글 내용 (맛집 공유)</h3>
+<p><a th:href="@{/siteuser/board/allarticles(pno=${pno})}">글목록</a></p>
 
 <table style="width:100%" border="1">
 <tr><td>제목</td><td>[[${article.title}]]</td>

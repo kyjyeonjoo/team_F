@@ -40,10 +40,10 @@
 </head>
 
 <body>
-<h3>게시글 목록</h3>
+<h3>게시글 목록(후기)</h3>
 <p>
 <a th:href="@{/siteuser/}">첫페이지</a>
-<a th:href="@{/siteuser/board/write}">글 작성</a>
+<a th:href="@{/siteuser/board/review_write}">글 작성</a>
 </p>
 
 <table style="width:100%" border="1">
@@ -57,10 +57,10 @@
 		 -->
 	</tr>
 	
-	<tr th:each="article : ${articles}">
- 		<td th:text="${article.num}"></td>
- 		<td><a th:href="@{/siteuser/board/read?num={id}(id=${article.num}, pno=${articles.number})}"> [[${article.title}]]</a></td>
- 		<td th:text="${article.author}"></td>
+	<tr th:each="review_article : ${review_articles}">
+ 		<td th:text="${review_article.num}"></td>
+ 		<td><a th:href="@{/siteuser/board/review_read?num={id}(id=${review_article.num}, pno=${review_articles.number})}"> [[${review_article.title}]]</a></td>
+ 		<td th:text="${review_article.author}"></td>
  		
  		
  <!--  
@@ -73,8 +73,9 @@
  	
  	<tr>
  		<td colspan="3">
- 		<th:block th:each="p:${#numbers.sequence(0, articles.totalPages -1)}">
- 		<a th:href="@{/siteuser/board?pno={p}(p=${p})}">[[${p}]]</a>
+ 		<th:block th:each="p:${#numbers.sequence(0, review_articles.totalPages -1)}">
+ 		<a th:href="@{/siteuser/board/review_allarticles?pno={p}(p=${p})}">[[${p}]]</a>
+ 		</th:block>
  		</td>
  	</tr>
  	

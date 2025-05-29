@@ -40,7 +40,7 @@
 </head>
 
 <body>
-<h3>게시글 목록</h3>
+<h3>게시글 목록(맛집 공유)</h3>
 <p>
 <a th:href="@{/siteuser/}">첫페이지</a>
 <a th:href="@{/siteuser/board/write}">글 작성</a>
@@ -74,7 +74,7 @@
  	<tr>
  		<td colspan="3">
  		<th:block th:each="p:${#numbers.sequence(0, articles.totalPages -1)}">
- 		<a th:href="@{/siteuser/board?pno={p}(p=${p})}">[[${p}]]</a>
+ 		<a th:href="@{/siteuser/board/allarticles?pno={p}(p=${p})}">[[${p}]]</a>
  		</td>
  	</tr>
  	
