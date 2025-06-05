@@ -2,6 +2,7 @@ package ce.mun.siteuser;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,6 +51,7 @@ public class ArticleController {
 	@Autowired
 	private SiteUserService userService;
 	
+	//파일 업로드 관련 내용
 	@Autowired
 	private FileRepository fileRepository;
 	
@@ -59,22 +63,24 @@ public class ArticleController {
 	@PostMapping("bbs/upload")
 	public String upload(@RequestParam MultipartFile file, Model model) throws IllegalStateException, IOException {
 		if(!file.isEmpty()) {
-			String fileName = file.getOriginalFilename();
+			String fileName = file.getOriginalFilename();//업로드 파일 명
 			fileName = fileName.replace(" ", "_");
 			FileDTO dto = new FileDTO();
 			dto.setFileName(fileName);
 			dto.setContentType(file.getContentType());
 			File upfile = new File(dto.getFileName());
-			file.transferTo(upfile);
+			file.transferTo(upfile);//파일 저장
 			
 			SiteFile siteFile = new SiteFile();
 			siteFile.setName(fileName);
-			fileRepository.save(siteFile);
-			
+			fileRepository.save(siteFile); //파일 저장
 			model.addAttribute("file", dto);
 			}
+			
 		return "/bbs/result";
 	}
+	
+
 	
 	@GetMapping("bbs/filelist")
 	public String filelist(Model model) {
@@ -83,22 +89,36 @@ public class ArticleController {
 		return "/bbs/file_list";
 	}
 	
+	
+	
 	@Value("${spring.servlet.multipart.location}")
 	String base;
 	@GetMapping("bbs/download")
 	public ResponseEntity <Resource> download(FileDTO dto) throws IOException{
 		Path path = Paths.get(base+"/"+dto.getFileName());
+		
+		
 		String contentType = Files.probeContentType(path);
 		HttpHeaders headers = new HttpHeaders();
+		Resource res = new InputStreamResource(Files.newInputStream(path));
+		
+		if (dto.getFileName().endsWith(".png") || dto.getFileName().endsWith(".jpg") || dto.getFileName().endsWith(".jpeg") || dto.getFileName().endsWith(".gif")) {
+			headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+			return new ResponseEntity<>(res, headers, HttpStatus.OK);
+	    }
+
 		headers.setContentDisposition(
 				ContentDisposition.builder("attachment")
 				.filename(dto.getFileName(), StandardCharsets.UTF_8).build());
 		headers.add(HttpHeaders.CONTENT_TYPE, contentType);
-		Resource res = new InputStreamResource(Files.newInputStream(path));
+		
 		return new ResponseEntity<>(res, headers, HttpStatus.OK);
+			
 		
 	}
 //////////////////////////////////////////////////////////////////////////////////////////////
+
+	// 게시판 관련 내용(맛집)
 	@GetMapping("board/write")
 	public String bbsForm() {
 		return "/board/restaurant_new_article";
@@ -137,9 +157,35 @@ public class ArticleController {
 	public String subjectArticle() {
 		return "/board/subject";
 	}
+	
+	// 수정 폼 이동
+	@GetMapping("/board/edit")
+	public String editArticleForm(@RequestParam Long num, Model model) {
+		Article article = userService.getArticle(num); 
+	    model.addAttribute("article", article);
+	    return "/board/restaurant_edit_article";
+	}
 
+	// 수정 처리
+	@PostMapping("/board/edit")
+	public String editArticle(@RequestParam Long num, @RequestParam String title, @RequestParam String contents) {
+		userService.edit(num, title, contents);
+	    return "redirect:/siteuser/board/read?num=" + num;
+	}
+
+	// 삭제 처리
+	@GetMapping("/board/delete")
+	public String deleteArticle(@RequestParam Long num) {
+		userService.delete(num);
+	    return "redirect:/siteuser/board/restaurant_allarticles";
+	}
+
+	
 //////////////////////////////////////////////////////////////////////////////////////////////
 
+	// 게시판 관련 내용(후기)
+	
+	//쓰기
 	@GetMapping("board/review_write")
 	public String Form() {
 		return "/board/review_new_article";
@@ -150,6 +196,7 @@ public class ArticleController {
 		return "/board/review_saved";
 	}
 	
+	// 읽기
 	@GetMapping("board/review_read")
 	public String readArticle_review(@RequestParam(name="num")Long num, @RequestParam( defaultValue="0",  name="pno") int pno, Model model, HttpSession session) {
 		Article_review article_review= userService.getArticle_review(num);
@@ -159,7 +206,6 @@ public class ArticleController {
 	}
 	
 
-	
 	@GetMapping("board/review_allarticles")
 	public String getAllArticles_review(@RequestParam(defaultValue="0",  name="pno") int pno, Model model, HttpSession session, RedirectAttributes rd){
 		String email = (String)session.getAttribute("email");
@@ -177,6 +223,31 @@ public class ArticleController {
 		model.addAttribute("review_articles", list);
 		return "/board/review_articles";
 	}
+	
+	// 수정 폼 이동
+	@GetMapping("/board/review_edit")
+	public String editReviewForm(@RequestParam Long num, Model model) {
+		Article_review article_review = userService.getArticle_review(num); 
+	    model.addAttribute("article_review", article_review);
+	    return "/board/review_edit_article";
+	}
+
+	// 수정 처리
+	@PostMapping("/board/review_edit")
+	public String editReview(@RequestParam Long num, @RequestParam String title, @RequestParam String contents) {
+		userService.editReview(num, title, contents);
+	    return "redirect:/siteuser/board/review_read?num=" + num;
+	}
+
+	// 삭제 처리
+	@GetMapping("/board/review_delete")
+	public String deleteReview(@RequestParam Long num) {
+		userService.deleteReview(num);
+	    return "redirect:/siteuser/board/review_allarticles";
+	}
+
+	
+
 	
 	
 }

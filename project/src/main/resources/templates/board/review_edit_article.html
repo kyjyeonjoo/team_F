@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>게시글 내용 (후기)</title>
+</head>
+
+<body>
+<h3>게시글 내용 (후기)</h3>
+
+<form th:action="@{/siteuser/board/review_edit}" method="post">
+    <input type="hidden" name="num" th:value="${article_review.num}" />
+    <p>제목: <input type="text" name="title" th:value="${article_review.title}" /></p>
+    <p>내용: <textarea name="contents" th:text="${article_review.contents}"></textarea></p>
+    <p><input type="submit" value="수정 완료" /></p>
+</form>
+
+</body>
+</html>

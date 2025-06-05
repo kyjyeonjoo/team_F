@@ -16,5 +16,10 @@
 <tr><td>날짜</td><td>[[${article.day}]]</td>
 </table>
 
+<p>
+    <a th:href="@{/siteuser/board/edit(num=${article.num})}">수정</a>
+    <a th:href="@{/siteuser/board/delete(num=${article.num})}">삭제</a>
+</p>
+
 </body>
 </html>

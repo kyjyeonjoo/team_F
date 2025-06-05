@@ -1,6 +1,7 @@
 package ce.mun.siteuser.service;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,8 @@ public class SiteUserService {
 	@Autowired
 	private SiteUserRepository userRepository;
 	
+	
+	// 게시판 관련 (맛집)
 	@Autowired
 	private ArticleRepository articleRepository;
 	public Page<ArticleHeader> getArticleHeaders(Pageable pageable){
@@ -48,9 +51,24 @@ public class SiteUserService {
 		return articleRepository.findAll();
 	}
 	
+	@Transactional
+	public void edit(Long num, String title, String contents) {
+		Article article = articleRepository.findById(num).orElse(null);
+		if (article != null) {
+			article.setTitle(title);
+			article.setContents(contents);
+		}
+	}
+
+	@Transactional
+	public void delete(Long num) {
+		articleRepository.deleteById(num);
+	}
 	
 	
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	// 게시판 관련 (후기)
 	@Autowired
 	private Article_reviewRepository article_reviewRepository;
 	public Page<Article_reviewHeader> getArticle_reviewHeaders(Pageable pageable){
@@ -74,14 +92,26 @@ public class SiteUserService {
 		return article_reviewRepository.findAll();
 	}
 	
+	@Transactional
+	public void editReview(Long num, String title, String contents) {
+		Article_review article_review = article_reviewRepository.findById(num).orElse(null);
+		if (article_review != null) {
+			article_review.setTitle(title);
+			article_review.setContents(contents);
+		}
+	}
+
+	@Transactional
+	public void deleteReview(Long num) {
+		article_reviewRepository.deleteById(num);
+	}
+	
+
 	
 	
 	
-	
-	
-	
-	
-	
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// 사용자 관련
 	public void save(SiteUserDTO dto) {
 		SiteUser user = new SiteUser(dto.getName(), dto.getEmail(), dto.getPasswd(), dto.getNickname(), dto.getPhone(), dto.getAddress());
 		userRepository.save(user);
@@ -108,7 +138,4 @@ public class SiteUserService {
 		user.setAddress(address);
 		}
 	}
-
-	
-
 }
